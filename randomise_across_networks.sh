@@ -6,10 +6,10 @@
 
 # Define paths
 BASEPATH="/Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS"
-INPUTFOLDER="$BASEPATH/randomise/input_RRMSonly"
-OUTPUTFOLDER="$BASEPATH/HigherLevel/RRMS_only"
-DESIGNFILE="$BASEPATH/design106_RRMSonly.mat"
-CONTRASTFILE="$BASEPATH/design106_RRMSonly.con"
+INPUTFOLDER="$BASEPATH/Randomise/input_RRMSonly"
+OUTPUTFOLDER="$BASEPATH/HigherLevel/RRMSonly_Efficiency"
+DESIGNFILE="$BASEPATH/design106_RRMSonly_effic.mat"
+CONTRASTFILE="$BASEPATH/design106.con"
 
 # FSL's randomise command line
 # randomise -i <4D_input_data> -o <output_rootname> -d design.mat -t
@@ -27,10 +27,9 @@ do
   # remove the .nii.gz from the network name
   network=$(basename "${i}" | awk -F'[.]' '{print $1}')
   echo $network
-  mask=$(echo "$network" | awk -F'[_]' '{print $1}')
+  mask=$(echo "$network" | awk -F'[_]' '{print $1 "_" $2}')
   echo $mask
-  #if "${mask}_106_thr_bin_tfce_corrp_tstat2.nii.gz"
-  randomise -i $i -o $OUTPUTFOLDER/$network -d $DESIGNFILE -t $CONTRASTFILE -m $BASEPATH/Randomise/networks_of_interest/${mask}_dr_stage3_ic00??_tfce_corrp_tstat1_thr_bin.nii.gz -n 5000 -D -T
+  randomise -i $i -o $OUTPUTFOLDER/$network -d $DESIGNFILE -t $CONTRASTFILE -m $BASEPATH/NetworksSelected/${mask}_thr_vol00??.nii.gz -n 5000 -D -T
 done
 
 echo "finished $0 on $(date)"
