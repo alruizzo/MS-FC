@@ -6,10 +6,10 @@
 
 # Define paths
 BASEPATH="/Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS"
-INPUTFOLDER="$BASEPATH/Randomise/input_RRMSonly"
-OUTPUTFOLDER="$BASEPATH/HigherLevel/RRMSonly_Efficiency"
-DESIGNFILE="$BASEPATH/design106_RRMSonly_effic.mat"
-CONTRASTFILE="$BASEPATH/design106.con"
+INPUTFOLDER="$BASEPATH/Randomise/input"
+OUTPUTFOLDER="$BASEPATH/HigherLevel/TotalScore"
+DESIGNFILE="$BASEPATH/design.mat"
+CONTRASTFILE="$BASEPATH/design.con"
 
 # FSL's randomise command line
 # randomise -i <4D_input_data> -o <output_rootname> -d design.mat -t
