@@ -33,8 +33,8 @@ DB$Group <- factor(DB$Group)
 
 # Adjust factor levels for MS DX
 DB$MS_dx[which(DB$MS_dx==1)] <- "RRMS"
-DB$MS_dx[which(DB$MS_dx==2)] <- "P/SP-MS"
-DB$MS_dx <- factor(DB$MS_dx, levels = c("RRMS", "P/SP-MS"))
+DB$MS_dx[which(DB$MS_dx==2)] <- "SP-MS"
+DB$MS_dx <- factor(DB$MS_dx, levels = c("RRMS", "SP-MS"))
 
 # Adjust levels for sex
 DB$sex_E[which(DB$sex_E==1)] <- "x"
@@ -45,10 +45,10 @@ DB$sex_E <- factor(DB$sex_E, levels = c("x", "y"))
 DB$schule_E <- factor(DB$schule_E)
 
 # Adjust levels for number of relapses last year
-DB$Nr_relapses_last_yr[which(
-  DB$Nr_relapses_last_yr>=2)] <- "≥2"
+# DB$Nr_relapses_last_yr[which(
+#   DB$Nr_relapses_last_yr>=2)] <- "≥2"
 DB$Nr_relapses_last_yr <- factor(DB$Nr_relapses_last_yr,
-                                 levels = c("0", "1", "≥ 2"))
+                                 levels = c("0", "1"))
 
 # Adjust current medication info and type
 DB$Curr_MS_medication_yes_no[which(
@@ -76,7 +76,8 @@ DB$Curr_MS_medic_type[which(
 DB$Curr_MS_medic_type <- factor(DB$Curr_MS_medic_type)
   # Frequency table
 Medic_type_table <- table(DB$Curr_MS_medic_type[which(
-  DB$MS_dx=="P/SP-MS" & DB$Curr_MS_medication_yes_no=="Yes")])
+  # DB$MS_dx=="SP-MS" &
+    DB$Curr_MS_medication_yes_no=="Yes")])
 freq_table <- data.frame(cbind(freq = Medic_type_table,
       percentage = round((prop.table(Medic_type_table)*100), 2)))
 
@@ -96,7 +97,7 @@ summ_vbles <- DB %>% select("Age [years]" = age_N,
                             "Sex" = sex_E,
                             "Education level" = schule_E,
                             "Subjective fatigue [MFIS]" = mfis_N,
-                            "Sleep quality [PSQI]" = psqi_N,
+                            "Sleep quality [PSQI]" = TotalScore,
                             "Depression/Anxiety [HADS-D]" = sumDAskala,
                             "Functional impairment [MSFC]" = MSFC,
                             "Global cognitive status [MoCA]" = moca_N,
@@ -104,13 +105,15 @@ summ_vbles <- DB %>% select("Age [years]" = age_N,
                             "Current MS medication [yes]" = Curr_MS_medication_yes_no,
                             "Total lesion volume [ml]" = TLV,
                             "Disability Status [EDSS]" = edssges_N,
-                            "Number of relapses [last year]" = Nr_relapses_last_yr,
-                            MS_dx) %>%
-  tbl_summary(by = MS_dx, missing = "no",
+                            "Number of relapses [last year]" = Nr_relapses_last_yr#,
+                            #MS_dx) %>%
+                            ) %>%
+  tbl_summary(missing = "no", #by = MS_dx
               type = "Global cognitive status [MoCA]" ~ "continuous",
-              digits = all_continuous() ~ 1,) %>%
-  add_p() %>% modify_header(label = "**Variable**") %>%
-  add_overall() %>% #bold_labels() %>%
+              statistic = list(all_continuous() ~ "{mean} ({sd})"),
+              digits = all_continuous() ~ 1,) %>% # add_p() %>%
+  modify_header(label = "**Variable**") %>%
+  #add_overall() %>% #bold_labels() %>%
   as_gt() %>% opt_table_font(font = "Arial") %>%
   tab_options(table_body.hlines.width = 0,
               column_labels.border.top.width = 2,
@@ -120,7 +123,6 @@ summ_vbles <- DB %>% select("Age [years]" = age_N,
               table_body.border.bottom.color = "black",
               table.border.bottom.color = "white",
               table.font.size = px(14))
-gtsave(summ_vbles, "demographic_table.rtf")
 gtsave(summ_vbles, "demographic_table.html")
 webshot(url =
 "file:///Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/Docs/demographic_table.html",
@@ -130,5 +132,5 @@ webshot(url =
 
 ####=========================================================####
 # Reporting comorbidities (more narratively, I guess)
-DB$Comorbidities[which(DB$Comorbidities!="" &
-                         DB$MS_dx=="P/SP-MS")]
+DB$Comorbidities[which(DB$Comorbidities!="")] #&
+                         #DB$MS_dx=="P/SP-MS")]
