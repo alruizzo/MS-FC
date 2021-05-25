@@ -45,10 +45,10 @@ DB$sex_E <- factor(DB$sex_E, levels = c("x", "y"))
 DB$schule_E <- factor(DB$schule_E)
 
 # Adjust levels for number of relapses last year
-# DB$Nr_relapses_last_yr[which(
-#   DB$Nr_relapses_last_yr>=2)] <- "≥2"
+DB$Nr_relapses_last_yr[which(
+  DB$Nr_relapses_last_yr>=2)] <- "≥2"
 DB$Nr_relapses_last_yr <- factor(DB$Nr_relapses_last_yr,
-                                 levels = c("0", "1"))
+                                 levels = c("0", "1", "≥2"))
 
 # Adjust current medication info and type
 DB$Curr_MS_medication_yes_no[which(
@@ -108,10 +108,11 @@ summ_vbles <- DB %>% select("Age [years]" = age_N,
                             "Number of relapses [last year]" = Nr_relapses_last_yr#,
                             #MS_dx) %>%
                             ) %>%
-  tbl_summary(missing = "no", #by = MS_dx
+  tbl_summary(missing = "ifany", #by = MS_dx
               type = "Global cognitive status [MoCA]" ~ "continuous",
               statistic = list(all_continuous() ~ "{mean} ({sd})"),
-              digits = all_continuous() ~ 1,) %>% # add_p() %>%
+              digits = list(all_categorical() ~ c(0, 1),
+                            all_continuous() ~ 1)) %>% # add_p() %>%
   modify_header(label = "**Variable**") %>%
   #add_overall() %>% #bold_labels() %>%
   as_gt() %>% opt_table_font(font = "Arial") %>%
