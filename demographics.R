@@ -8,7 +8,7 @@
 # Loading relevant packages
 # install.packages("pacman") # one time step
 # require(pacman)
-# pacman::p_load(dplyr, gtsummary, gt, webshot, funModeling)
+pacman::p_load(dplyr, gtsummary, gt, webshot, funModeling)
 
 
 ####=========================================================####
@@ -96,16 +96,16 @@ DB$edssges_N[which(DB$edssges_N>=3)] <- "3 - 7"
 summ_vbles <- DB %>% select("Age [years]" = age_N,
                             "Sex" = sex_E,
                             "Education level" = schule_E,
-                            "Subjective fatigue [MFIS]" = mfis_N,
-                            "Sleep quality [PSQI]" = TotalScore,
-                            "Depression/Anxiety [HADS-D]" = sumDAskala,
-                            "Functional impairment [MSFC]" = MSFC,
-                            "Global cognitive status [MoCA]" = moca_N,
                             "Disease duration [years]" = Disease_duration,
                             "Current MS medication [yes]" = Curr_MS_medication_yes_no,
-                            "Total lesion volume [ml]" = TLV,
+                            "Number of relapses [last year]" = Nr_relapses_last_yr,
                             "Disability Status [EDSS]" = edssges_N,
-                            "Number of relapses [last year]" = Nr_relapses_last_yr#,
+                            "Total lesion volume [ml]" = TLV,
+                            "Functional impairment [MSFC]" = MSFC,
+                            "Global cognitive status [MoCA]" = moca_N,
+                            "Depression/Anxiety [HADS-D]" = sumDAskala,
+                            "Subjective fatigue [MFIS]" = mfis_N,
+                            "Sleep quality [PSQI]" = TotalScore,
                             #MS_dx) %>%
                             ) %>%
   tbl_summary(missing = "ifany", #by = MS_dx
