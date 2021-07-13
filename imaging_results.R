@@ -9,11 +9,11 @@
 # RELEVANT PACKAGES
 # install.packages("pacman")
 # require(pacman)
-# pacman::p_load(dplyr, ggplot2, ggthemes, ggvis, plotly,
-#                rio, stringr, tidyr, ggpubr, psych, pastecs,
-#                Hmisc, ggExtra, corrplot, lmSupport, lmtest,
-#                car, gtsummary, gt, webshot, funModeling, leaps,
-#                RColorBrewer, FactoMineR, factoextra)
+pacman::p_load(dplyr, ggplot2, ggthemes, ggvis, plotly,
+               rio, stringr, tidyr, ggpubr, psych, pastecs,
+               Hmisc, ggExtra, corrplot, lmSupport, lmtest,
+               car, gtsummary, gt, webshot, funModeling, leaps,
+               RColorBrewer, FactoMineR, factoextra, gmodels)
 
 
 ####=========================================================####
@@ -570,6 +570,11 @@ LMSleepModel_LFPN <- lm(DB$IC8_LFPN ~
                              # DB$sex_E)
 summary(LMSleepModel_LFPN)
 
+# Save desired output of linear regression
+sink("lm_LFPN.txt")
+print(summary(LMSleepModel_LFPN))
+sink()
+
 # Find the best sleep model to predict LFPN FC:
 best_subset <- regsubsets(DB$IC8_LFPN ~ PSQI_sub$Sleep_latency_min +
                             PSQI_sub$sleep_quality +
@@ -618,6 +623,29 @@ LMfullmodel_latency <- lm(PSQI_sub$Sleep_latency_min ~
                                DB$Realign_meanFD_Jenkinson)
 summary(LMfullmodel_latency)
 
+# Calculate regression model on SMN2-FC
+LMSleepModel_SMN2 <- lm(DB$IC7_SMN2 ~
+                          PSQI_sub$Sleep_latency_min +
+                          # PSQI_sub$Sleep_latency +
+                          PSQI_sub$sleep_quality +
+                          PSQI_sub$Sleep_duration +
+                          PSQI_sub$sleep_efficiency_perc +
+                          # PSQI_sub$sleep_efficiency +
+                          PSQI_sub$sleep_disturbances +
+                          PSQI_sub$sleep_Medication +
+                          PSQI_sub$daytime_sleepiness)# +
+                          # DB$sumDAskala +
+                          # DB$TLV +
+                          # DB$edssges_N +
+                          # DB$schule_E +
+                          # DB$sex_E)
+summary(LMSleepModel_SMN2)
+
+# Save desired output of linear regression
+sink("lm_SMN2.txt")
+print(summary(LMSleepModel_SMN2))
+sink()
+
 
 ####=========================================================####
 # Make table of PSQI subscores for report
@@ -649,6 +677,23 @@ summ_vbles <- PSQI_sub %>%
               table.border.bottom.color = "white",
               table.font.size = px(14))
 gtsave(summ_vbles, "PSQI_subscores.html")
+
+
+####=========================================================####
+# Make table of sichotomous fatigue and SQ frequencies for report
+
+# Create dichotomous variables
+DB$fatigue <- ""
+DB$sleep <- ""
+DB$fatigue <- ifelse(DB$mfis_N >= 38, "high", "low")
+DB$sleep <- ifelse(DB$TotalScore >= 5, "poor", "better")
+
+# Make cross-table
+table(DB$fatigue)
+prop.table(table(DB$fatigue))
+table(DB$sleep)
+prop.table(table(DB$sleep))
+crosstable <- CrossTable(DB$fatigue, DB$sleep)
 
 
 ####=========================================================####
