@@ -1,24 +1,21 @@
 ####=========================================================####
 # A.L.R.R. March 2021
-# Script to create demographic table for manuscript
+# Script to create demographic table for MS manuscript
 
 
-####=========================================================####
-# RELEVANT PACKAGES
-# Loading relevant packages
+# Relevant packages =============================================####
+# Load relevant packages
 # install.packages("pacman") # one time step
-# require(pacman)
+# require(pacman) # one time step
 pacman::p_load(dplyr, gtsummary, gt, webshot, funModeling)
 
 
-####=========================================================####
-# SET DIRECTORY
+# Set directory =================================================####
 setwd(paste('/Users/lmuresearchfellowship/Documents/Adriana/',
             'LMU_Psychology/Projects/MS/Docs', sep = ""))
 
 
-####=========================================================####
-# OBTAIN DATA
+# Obtain/Read data ==============================================####
 
 # Create data frame
 DB <- read.csv("Demographics_all.csv")
@@ -37,16 +34,25 @@ DB$MS_dx[which(DB$MS_dx==2)] <- "SP-MS"
 DB$MS_dx <- factor(DB$MS_dx, levels = c("RRMS", "SP-MS"))
 
 # Adjust levels for sex
-DB$sex_E[which(DB$sex_E==1)] <- "x"
-DB$sex_E[which(DB$sex_E==2)] <- "y"
-DB$sex_E <- factor(DB$sex_E, levels = c("x", "y"))
+DB$sex_E[which(DB$sex_E==1)] <- "Male"
+DB$sex_E[which(DB$sex_E==2)] <- "Female"
+DB$sex_E <- factor(DB$sex_E, levels = c("Male", "Female"))
 
-# Adjust levels for education
-DB$schule_E <- factor(DB$schule_E)
+# Adjust levels for education (Hauptschule, Realschule, and
+# Gymnasium)
+DB$schule_E[which(DB$schule_E==2)] <- "Lower secondary level"
+DB$schule_E[which(DB$schule_E==3)] <- "Upper secondary level A"
+DB$schule_E[which(DB$schule_E==4)] <- "Upper secondary level B"
+DB$schule_E <- factor(DB$schule_E,
+                      levels = c("Lower secondary level",
+                                 "Upper secondary level A",
+                                 "Upper secondary level B"))
 
 # Adjust levels for number of relapses last year
 DB$Nr_relapses_last_yr[which(
   DB$Nr_relapses_last_yr>=2)] <- "≥2"
+DB$Nr_relapses_last_yr[which(is.na(DB$Nr_relapses_last_yr)==T &
+                               DB$MS_dx=="SP-MS")] <- "0"
 DB$Nr_relapses_last_yr <- factor(DB$Nr_relapses_last_yr,
                                  levels = c("0", "1", "≥2"))
 
@@ -89,21 +95,26 @@ DB$edssges_N[which(DB$edssges_N<3)] <- "< 3"
 DB$edssges_N[which(DB$edssges_N>=3)] <- "3 - 7"
 
 
-####=========================================================####
-# Make table
+# Make table ====================================================####
+# Make and save the demographics table for the manuscript
 
 # Make dataset with variables to summarize
 summ_vbles <- DB %>% select("Age [years]" = age_N,
                             "Sex" = sex_E,
-                            "Education level" = schule_E,
-                            "Disease duration [years]" = Disease_duration,
-                            "Current MS medication [yes]" = Curr_MS_medication_yes_no,
-                            "Number of relapses [last year]" = Nr_relapses_last_yr,
+                            "Education levels" = schule_E,
+                            "Disease duration [years]" =
+                              Disease_duration,
+                            "Current MS medication [yes]" =
+                              Curr_MS_medication_yes_no,
+                            "Number of relapses [last year]" =
+                              Nr_relapses_last_yr,
                             "Disability Status [EDSS]" = edssges_N,
                             "Total lesion volume [ml]" = TLV,
                             "Functional impairment [MSFC]" = MSFC,
-                            "Global cognitive status [MoCA]" = moca_N,
-                            "Depression/Anxiety [HADS-D]" = sumDAskala,
+                            "Global cognitive status [MoCA]" =
+                              moca_N,
+                            "Depression/Anxiety [HADS-D]" =
+                              sumDAskala,
                             "Subjective fatigue [MFIS]" = mfis_N,
                             "Sleep quality [PSQI]" = TotalScore,
                             #MS_dx) %>%
@@ -125,13 +136,8 @@ summ_vbles <- DB %>% select("Age [years]" = age_N,
               table.border.bottom.color = "white",
               table.font.size = px(14))
 gtsave(summ_vbles, "demographic_table.html")
-webshot(url =
-"file:///Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/Docs/demographic_table.html",
-        "table.jpeg", zoom = 6)#, cliprect = c(0, 0, 850, 400),
-        #expand = c(0, 0, 0, -100))
 
 
-####=========================================================####
-# Reporting comorbidities (more narratively, I guess)
-DB$Comorbidities[which(DB$Comorbidities!="")] #&
-                         #DB$MS_dx=="P/SP-MS")]
+# Comorbidities =================================================####
+# Get a list of comorbidities
+DB$Comorbidities[which(DB$Comorbidities!="")]
