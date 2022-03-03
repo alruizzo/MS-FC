@@ -141,3 +141,24 @@ gtsave(summ_vbles, "demographic_table.html")
 # Comorbidities =================================================####
 # Get a list of comorbidities
 DB$Comorbidities[which(DB$Comorbidities!="")]
+
+
+# PASAT =========================================================####
+# Compute the z-score of PASAT (for manuscript revision)
+# Mean and SD of the entire baseline cohort
+
+DB$pasatZ <- (DB$pasatGesamt - 45.215789) / 11.4767
+
+
+# DEPRESSION/ANXIETY ============================================####
+# Obtain the separate depression/anxiety scores
+
+# Read file 
+anx_dep <- read.csv("depression_anxiety_all_FC.csv")
+
+# Delete blank columns & restrict to "DB" rows
+anx_dep <- anx_dep[anx_dep$patnr_C %in% DB$patnr_C, c(1:3)] # Excuse
+# the hard-coding for the columns here!
+rownames(anx_dep) <- NULL
+
+cor.test(anx_dep$dskala_N, anx_dep$askala_N)
