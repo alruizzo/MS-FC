@@ -1,12 +1,12 @@
-####=========================================================####
+####=============================================================####
 # A.L.R.R. 11/DEC/2019
 # Modified on April 6, 2021
+# Modified on March 10, 2022
 # This script shows the correlation plots between MS and
 # ...imaging variables
 
 
-####=========================================================####
-# RELEVANT PACKAGES
+#### RELEVANT PACKAGES ==========================================####
 # install.packages("pacman")
 # require(pacman)
 pacman::p_load(dplyr, ggplot2, ggthemes, ggvis, plotly,
@@ -16,16 +16,13 @@ pacman::p_load(dplyr, ggplot2, ggthemes, ggvis, plotly,
                RColorBrewer, FactoMineR, factoextra, gmodels)
 
 
-####=========================================================####
-# SET DIRECTORY
+#### SET DIRECTORY ==============================================####
 # Working directory
 setwd(paste('/Users/lmuresearchfellowship/Documents/Adriana/',
             'LMU_Psychology/Projects/MS/Docs', sep = ""))
 
 
-####=========================================================####
-# OBTAINING DATA
-
+#### OBTAINING DATA =============================================####
 # Read the behavioral data from a file
 DB_behav <- read.csv("Demographics_all.csv")
 
@@ -52,15 +49,12 @@ DB[, colnames(DB) %in% temp] <-
 rm(temp)
 
 
-####=========================================================####
-# CHECK THE LINEARITY OF THE DATA
-
+#### CHECK THE LINEARITY OF THE DATA ============================####
 # Relationship with each of the original vbles (of interest)
 pairs(DB[, c(4:5, 28:length(DB))])
 
 
-####=========================================================####
-# LINEAR REGRESSION MODEL FATIGUE
+#### LINEAR REGRESSION MODEL FATIGUE ============================####
 
 # Regression model with all predictors on Fatigue
 LMfullmodel_fatigue <- lm(DB$mfis_N ~
@@ -155,8 +149,7 @@ influencePlot(LMfullmodel_fatigue,
               sub = "Circle size is proportial to Cook's Distance")
 
 
-####=========================================================####
-# LINEAR REGRESSION MODEL SLEEP
+#### LINEAR REGRESSION MODEL SLEEP ==============================####
 
 # Specify model
 LMfullmodel_sleep <- lm(DB$TotalScore ~
@@ -250,8 +243,8 @@ influencePlot(LMfullmodel_sleep,
               sub = "Circle size is proportial to Cook's Distance")
 
 
-####=========================================================####
-# SCATTER PLOT - GLOBAL (AVERAGE) FC AND FATIGUE
+#### SCATTER PLOT ====================================================####
+# GLOBAL (AVERAGE) FC AND FATIGUE
 
 # Scatter plot with the residuals of the regression (MFIS)
 p <- ggscatter(DB, x = "res_glob_IC7",
@@ -295,8 +288,8 @@ q <- ggscatter(DB, x = "IC7_SMN2",
 q + grids(axis = "xy", linetype = "solid")
 
 
-####=========================================================####
-# SCATTER PLOT - GLOBAL (AVERAGE) FC AND SLEEP
+#### SCATTER PLOT ===============================================####
+# GLOBAL (AVERAGE) FC AND SLEEP
 
 # Scatter plot with the residuals of the regression
 o <- ggscatter(DB, x = "res_glob_IC8",
@@ -340,7 +333,7 @@ q <- ggscatter(DB, x = "IC8_LFPN",
 q + grids(axis = "xy", linetype = "solid")
 
 
-####=========================================================####
+#### EFFECT SIZES ===============================================####
 # EFFECT SIZES AND INDIVIDUAL R SQUARED VALUES
 # ...(Calculates unique SSRs, SSE, SST.
 # ...Based on sums of squares, it calculates partial eta2
@@ -351,8 +344,7 @@ ES_LMfullmodel_fatigue <- modelEffectSizes(LMfullmodel_fatigue)
 ES_LMfullmodel_sleep <- modelEffectSizes(LMfullmodel_sleep)
 
 
-####=========================================================####
-# REGRESSION TABLE FATIGUE
+#### REGRESSION TABLE FATIGUE ===================================####
 
 LMfullmodel_fatigue %>%
   tbl_regression(label = list('DB$IC24_BG' ~ "FC BGN",
@@ -386,8 +378,7 @@ LMfullmodel_fatigue %>%
   gt::gtsave(filename = "fatigue_model_image.html")
 
 
-####=========================================================####
-# REGRESSION TABLE SLEEP
+#### REGRESSION TABLE SLEEP =====================================####
 
 LMfullmodel_sleep %>%
   tbl_regression(label = list('DB$IC24_BG' ~ "FC BGN",
@@ -421,8 +412,7 @@ LMfullmodel_sleep %>%
   gtsave(filename = "sleep_model_image.html")
 
 
-####=========================================================####
-# SUBSCORES OF THE PSQI
+#### SUBSCORES OF THE PSQI ======================================####
 
 # Prepare data
 PSQI_sub <- read.csv("CyCOG_PSQI.csv")
@@ -647,7 +637,7 @@ print(summary(LMSleepModel_SMN2))
 sink()
 
 
-####=========================================================####
+#### MAKE TABLE PSQI SUBSCORES ==================================####
 # Make table of PSQI subscores for report
 
 # Make dataset with variables to summarize
@@ -679,8 +669,8 @@ summ_vbles <- PSQI_sub %>%
 gtsave(summ_vbles, "PSQI_subscores.html")
 
 
-####=========================================================####
-# Make table of sichotomous fatigue and SQ frequencies for report
+#### MAKE FREQUENCY TABLE =======================================####
+# Make table of dichotomous fatigue and SQ frequencies for report
 
 # Create dichotomous variables
 DB$fatigue <- ""
@@ -696,7 +686,7 @@ prop.table(table(DB$sleep))
 crosstable <- CrossTable(DB$fatigue, DB$sleep)
 
 
-####=========================================================####
+#### ADDITIONAL EXPLORATORY ANALYSES ============================####
 # Other exploratory/interesting analyses
 
 # Create quantitative dataframe
@@ -736,3 +726,31 @@ fviz_pca_biplot(pcamodel,
                 col.var = as.factor(res.km$cluster), repel = T,
                 legend.title = "K-means clusters")
 ggsave("biplot_pca_kmeans.jpg")
+
+
+#### CORRELATION BETWEEN TWO CLUSTERS ===========================####
+# Correlation between FC values of two clusters (for review)
+
+# Read the information
+DB_imag_local <- read.table(file = "Z_average_FC_local_IC8.txt",
+                             header = T)
+
+# Bivariate correlation
+cor.test(DB_imag_local$IC8_LFPN_fatigue,
+         DB_imag_local$IC8_LFPN_sleep)
+
+# To be fair, we need to recreate the two clusters, e.g., with
+# partial correlation:
+#install.packages("ppcor")
+library("ppcor")
+
+# Partial correlation test
+# DB_behav was taken instead of DB because some variables were
+# converted to factors for the Demographic table in DB.
+pcor.test(DB_imag_local$IC8_LFPN_fatigue,
+          DB_imag_local$IC8_LFPN_sleep,
+          DB_behav[, c("TotalScore", "mfis_N",
+                 "sumDAskala", "TLV",
+                 "edssges_N", "age_N",
+                 "sex_E", "schule_E",
+                 "Realign_meanFD_Jenkinson")])
