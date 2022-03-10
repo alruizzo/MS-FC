@@ -1,0 +1,11 @@
+# Average cluster values extraction:
+
+# SQ
+## Threshold and binarize
+fslmaths /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat2.nii.gz -thr 0.95 -bin /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_cluster_mask_tstat2.nii.gz
+
+
+# Fatigue
+## Threshold and binarize
+fslmaths /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat1.nii.gz -thr 0.95 -bin /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_cluster_mask_tstat1.nii.gz
+
