@@ -1,0 +1,19 @@
+# Cluster (information) extraction from Randomise results:
+# https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Cluster#reporting
+
+cluster -i blah_blah_corrp_tstat1 -t 0.95 --scalarname="1-p" > cluster_corrp1.txt
+
+# Other: See https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Randomise/UserGuide
+fslmaths /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/IC7_106_tfce_corrp_tstat1.nii.gz -thr 0.95 -bin -mul /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/IC7_106_tstat1.nii.gz /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/IC7_106_thr_bin_tfce_corrp_tstat1.nii.gz
+
+# SQ
+# Threshold and binarize
+fslmaths /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_tfce_corrp_tstat2.nii.gz -thr 0.95 -bin -mul /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_tstat2.nii.gz /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat2.nii.gz
+# Extract cluster info table
+cluster -i /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat2.nii.gz -t 0.95 --scalarname="1-p" > /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_2.txt
+
+# Fatigue
+# Threshold and binarize
+fslmaths /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_tfce_corrp_tstat1.nii.gz -thr 0.95 -bin -mul /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_tstat1.nii.gz /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat1.nii.gz
+# Extract cluster info table
+cluster -i /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_tstat1.nii.gz -t 0.95 --scalarname="1-p" > /Users/lmuresearchfellowship/Documents/Adriana/LMU_Psychology/Projects/MS/HigherLevel/TotalScore/IC8_LFPN_104_thr_bin_tfce_corrp_1.txt
